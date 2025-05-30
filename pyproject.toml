@@ -1,0 +1,15 @@
+[project]
+name = "BootCamp_Codigo_Facilito"
+version = "0.1.0"
+description = "Default template for PDM package"
+authors = [
+    {name = "Fernando Bardelli", email = "fernando@fliabardelli.com.ar"},
+]
+dependencies = ["django>=5.2.1", "djangorestframework>=3.16.0"]
+requires-python = "==3.12.*"
+readme = "README.md"
+license = {text = "MIT"}
+
+
+[tool.pdm]
+distribution = false

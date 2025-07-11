@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  # =========================================
+  # Django Bootcamp
+  # =========================================
+  django:
+    image: fjbardelli/dj_bootcamp
+    deploy:
+      replicas: 1
+      placement:
+        constraints: [node.role == manager]
+      resources:
+        limits:
+          memory: 256M
+    networks:
+      - appnet
+    #volumes:
+    #  - /AityNet/volumes/club/media:/code/media
+    environment:
+      # Configuracion del Proxy & Certificados SSL 
+      - VIRTUAL_HOST=dj-codigo-facilito.fliabardelli.com.ar
+      - LETSENCRYPT_HOST=dj-codigo-facilito.fliabardelli.com.ar 
+      - LETSENCRYPT_EMAIL=fernando@fliabardelli.com.ar
+      - VIRTUAL_PORT=8000
+      
+networks:
+  appnet:
+    external: true

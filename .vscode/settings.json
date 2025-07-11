@@ -1,0 +1,11 @@
+{
+    "sqltools.useNodeRuntime": true,
+    "sqltools.connections": [
+        {
+            "previewLimit": 50,
+            "driver": "SQLite",
+            "name": "Bootcamp",
+            "database": "${workspaceFolder:dj_bootcamp}/bootcamp/db.sqlite3"
+        }
+    ]
+}

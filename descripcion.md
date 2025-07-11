@@ -2,10 +2,12 @@
 
 En el proyecto se implementa una API RESTful para la administración de colegios y cursos de estudiantes.
 Se van a poder de alta los modelos de
+
 - **Alumnos**: Representa a los estudiantes que están inscritos en los colegios.
 - **Docentes**: Representa a los profesores que imparten clases en los colegios.
+- **Especiales**: Representa las especialidades o áreas de conocimiento que pueden tener los docentes.
 - **Materias**: Representa las asignaturas que se enseñan en los colegios.
-- **Comisiones**: Representa las comisiones o grupos de estudiantes que cursan las materias.
+- **comisiones**: Representa las comisiones o grupos de estudiantes que cursan las materias.
 - **Examenes**: Representa los exámenes que se realizan a los estudiantes.
 - **Notas**: Representa las calificaciones obtenidas por los estudiantes en los exámenes.
 

@@ -1,0 +1,86 @@
+name: Test, Build & Deploy Django App to Docker Swarm
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  IMAGE_NAME: ${{ secrets.IMAGE_NAME }}
+
+jobs:
+  test:
+    name: Run Django Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.12
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run Django Tests
+        run: python app/manage.py test --keepdb
+        env:
+          DJANGO_SETTINGS_MODULE: bootcamp.settings
+          SECRET_KEY: dummy-key-for-ci
+          DEBUG: "False"
+
+  build-and-deploy:
+    name: Build and Deploy to Swarm
+    runs-on: ubuntu-latest
+    needs: test
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Login to Docker Hub
+        run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
+
+      - name: Build Docker Image
+        run: docker build -t $IMAGE_NAME:latest .
+
+      - name: Push Docker Image
+        run: docker push $IMAGE_NAME:latest
+
+      - name: Setup SSH
+        uses: webfactory/ssh-agent@v0.7.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Deploy to Docker Swarm
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} << EOF
+            set -euo pipefail
+
+            echo "📂 Entrando a $DEPLOY_PATH"
+            cd $DEPLOY_PATH
+
+            echo "📦 Reemplazando variable de imagen"
+            sed -i 's|\\$IMAGE_NAME|'$IMAGE_NAME'|g' docker-compose.yml
+
+            echo "🧪 Validando compose"
+            docker-compose config > /dev/null
+
+            echo "🚀 Deployando stack"
+            docker stack deploy -c docker-compose.yml $STACK_NAME || {
+              echo "❌ Falló el deploy, revirtiendo..."
+              docker stack deploy -c $(ls -t docker-compose.yml.bak.* | head -n1) $STACK_NAME
+              exit 2
+            }
+
+            echo "✅ Deploy exitoso"
+          EOF
+        env:
+          IMAGE_NAME: ${{ secrets.IMAGE_NAME }}
+          DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
+          STACK_NAME: ${{ secrets.STACK_NAME }}

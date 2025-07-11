@@ -1,0 +1,21 @@
+{% load cache %}  {# Importa la librería de cache #}
+
+<html>
+    <head>
+        <title>Boot Camp Django Código Facilito</title>
+    </head>
+    <body>
+        <h1>API de Administración de Colegios</h1>
+        <h2>Exámenes habilitados</h2>
+        <br>
+        {% cache 120 examenes %}
+        <ul>
+            {% for examen in examenes %}
+                <li><strong>{{ examen.comision }}</strong></li>
+            {% empty %}
+                <li>No hay exámenes cargados todavía.</li>
+            {% endfor %}
+        </ul>
+        {% endcache %}
+    </body>
+</html>

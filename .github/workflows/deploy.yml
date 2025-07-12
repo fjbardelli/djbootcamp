@@ -28,11 +28,11 @@ jobs:
           pip install -r requirements.txt
 
       - name: Run Django Tests
-        run: python manage.py test --keepdb
-        env:
-          DJANGO_SETTINGS_MODULE: bootcamp.settings
-          SECRET_KEY: dummy-secret
-          DEBUG: "False"
+        run: python bootcamp/manage.py test --keepdb
+        #env:
+        #  DJANGO_SETTINGS_MODULE: bootcamp.settings
+        #  SECRET_KEY: dummy-secret
+        #  DEBUG: "False"
 
   build-and-deploy:
     name: Build Docker and Deploy to Portainer

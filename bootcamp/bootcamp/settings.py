@@ -44,6 +44,8 @@ EXTERNAL_APPS = [
     'corsheaders',
     'rest_framework.authtoken',
     'rest_framework_simplejwt.token_blacklist',
+    'drf_spectacular',
+    'drf_spectacular_sidecar',
 ]
 #Aplicaciones del proyecto
 PROJECT_APPS = [
@@ -165,6 +167,7 @@ REST_FRAMEWORK = {
     },
     'UNAUTHENTICATED_USER': None,
     'DATETIME_FORMAT': "%d-%m-%Y %H:%M:%S",
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
 
 # Seguridad general en Producción
@@ -186,3 +189,14 @@ if not DEBUG:
     SECURE_HSTS_PRELOAD = True
     # HTTPS obligatorio
     SECURE_SSL_REDIRECT = True
+    
+    SPECTACULAR_SETTINGS = {
+    'TITLE': 'Bootcamp API',
+    'DESCRIPTION': 'Django Avanzado Codigo Facilito',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+    # OTHER SETTINGS
+    'SWAGGER_UI_DIST': 'SIDECAR',  # shorthand to use the sidecar instead
+    'SWAGGER_UI_FAVICON_HREF': 'SIDECAR',
+    'REDOC_DIST': 'SIDECAR',
+}

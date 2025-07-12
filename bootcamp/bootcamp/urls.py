@@ -18,6 +18,7 @@ from django.contrib import admin
 from django.urls import path, include
 from examenes.views import IndexView
 from django.http import JsonResponse
+from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
 
 def healthcheck(request):
     return JsonResponse({"status": "ok"})
@@ -26,6 +27,10 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', IndexView.as_view(), name='index'),
     path("health/", healthcheck),
+    path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
+    # Optional UI:
+    path('api/schema/swagger-ui/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
+    path('api/schema/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
     
     # API endpoints for each app
     path('api/', include('personas.urls')),

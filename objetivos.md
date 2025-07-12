@@ -40,7 +40,11 @@
 
 ## Requerimientos 3/2.
 - [x] El proyecto debe estar desplegado a producción.
-- [ ] Debe existir, por lo menos, un action en Github que permita automatizar una tarea.
+- [x] Debe existir, por lo menos, un action en Github que permita automatizar una tarea.
+- [x] Debe existir, por lo menos, un action en Github que permita desplegar el proyecto a producción.
+- [x] Debe existir, por lo menos, un action en Github que permita ejecutar
+    - [x] Step 1: Corre los tests
+    - [x] Step 2: Hace el de ploy a producción (Stack de Docker Swarm en Portainer).
 
 ## Formato de entrega.
 
@@ -57,12 +61,13 @@ solicitara:
 [Link de entrega](https://codigofacilito.com/bootcamps/django-avanzado/projects/new)
 
 ## Entregables. ☕
-- [ ] Repositorio public en Github (main/master).
-- [ ] URL del proyecto en producción.
+- [x] Repositorio public en Github (main/master).
+- [x] URL del proyecto en producción.
+    - [x] [producción](https://dj-codigo-facilito.fliabardelli.com.ar/)
 - [ ] Documentación.
 - [ ] PDF (Cualquier formato)
 - [ ] Incluir objetivo de proyecto y retos presentados.
-- [ ] README.md deﬁniendo doc y requerimientos del proyecto
+- [ ] README.md definiendo doc y requerimientos del proyecto
 
 [Link de entrega](https://codigofacilito.com/bootcamps/django-avanzado/projects/new)
 

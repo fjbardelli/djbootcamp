@@ -17,10 +17,16 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from examenes.views import IndexView
+from django.http import JsonResponse
+
+def healthcheck(request):
+    return JsonResponse({"status": "ok"})
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', IndexView.as_view(), name='index'),
-
+    path("health/", healthcheck),
+    
     # API endpoints for each app
     path('api/', include('personas.urls')),
     path('api/', include('materias.urls')),

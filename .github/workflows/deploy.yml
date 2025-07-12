@@ -32,7 +32,7 @@ jobs:
           ls -R
 
       - name: Run Django Tests
-        run: python bootcamp/manage.py test --keepdb
+        run: python bootcamp/bootcamp/manage.py test --keepdb
         #
         #  DJANGO_SETTINGS_MODULE: bootcamp.settings
         #  SECRET_KEY: dummy-secret-for-testing

@@ -57,7 +57,7 @@ jobs:
           host: ${{ secrets.PORTAINER_URL}}
           api-token: ${{ secrets.PORTAINER_TOKEN }}
           #swarmId: 'mtoqjoa2xxvXXXrw'
-          #endPointId: 1
+          endPointId: 1
           stack: ${{ secrets.PORTAINET_STACK_NAME }}
           client: 'portainer'
           action: 'deploy'

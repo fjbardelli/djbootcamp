@@ -7,79 +7,192 @@ on:
 
 env:
   IMAGE_NAME: ${{ secrets.IMAGE_NAME }}
+  PORTAINER_ENVIRONMENT_ID: 1
 
 jobs:
   test:
     name: Run Django Tests
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
-
+        uses: actions/checkout@v4
+        
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: 3.12
-
+          
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-
+          
       - name: Run Django Tests
         run: python bootcamp/manage.py test --keepdb
-        #env:
-        #  DJANGO_SETTINGS_MODULE: bootcamp.settings
-        #  SECRET_KEY: dummy-secret
-        #  DEBUG: "False"
+        env:
+          DJANGO_SETTINGS_MODULE: bootcamp.settings
+          SECRET_KEY: dummy-secret-for-testing
+          DEBUG: "False"
 
   build-and-deploy:
     name: Build Docker and Deploy to Portainer
     runs-on: ubuntu-latest
     needs: test
-
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
-
+        uses: actions/checkout@v4
+        
       - name: Log in to Docker Hub
         run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
-
+        
       - name: Build Docker Image
         run: docker build -t $IMAGE_NAME:latest .
-
+        
       - name: Push Docker Image
         run: docker push $IMAGE_NAME:latest
-
+        
       - name: Get Portainer API Token
         id: get_token
         run: |
-          response=$(curl -s -X POST "$PORTAINER_URL/api/auth" \
+          echo "🔐 Authenticating with Portainer..."
+          response=$(curl -s -w "%{http_code}" -X POST "$PORTAINER_URL/api/auth" \
             -H "Content-Type: application/json" \
             -d '{"Username": "'"$PORTAINER_USER"'", "Password": "'"$PORTAINER_PASSWORD"'"}')
-          token=$(echo "$response" | jq -r '.jwt')
+          
+          http_code="${response: -3}"
+          body="${response%???}"
+          
+          if [ "$http_code" -ne 200 ]; then
+            echo "❌ Failed to authenticate with Portainer. HTTP Code: $http_code"
+            echo "Response: $body"
+            exit 1
+          fi
+          
+          token=$(echo "$body" | jq -r '.jwt')
+          
+          if [ "$token" = "null" ] || [ -z "$token" ]; then
+            echo "❌ Failed to extract JWT token from response"
+            echo "Response: $body"
+            exit 1
+          fi
+          
+          echo "✅ Successfully authenticated with Portainer"
           echo "::add-mask::$token"
           echo "token=$token" >> "$GITHUB_OUTPUT"
         env:
           PORTAINER_URL: ${{ secrets.PORTAINER_URL }}
           PORTAINER_USER: ${{ secrets.PORTAINER_USER }}
           PORTAINER_PASSWORD: ${{ secrets.PORTAINER_PASSWORD }}
-
-      - name: Trigger Git Pull in Portainer
+          
+      - name: Get Stack Information
+        id: get_stack
         run: |
-          curl -s -X POST "$PORTAINER_URL/api/stacks/$PORTAINER_STACK_ID/git/pull" \
-            -H "Authorization: Bearer ${{ steps.get_token.outputs.token }}" \
-            -H "Content-Type: application/json"
+          echo "📋 Getting stack information..."
+          response=$(curl -s -w "%{http_code}" -X GET "$PORTAINER_URL/api/stacks/$PORTAINER_STACK_ID" \
+            -H "Authorization: Bearer ${{ steps.get_token.outputs.token }}")
+          
+          http_code="${response: -3}"
+          body="${response%???}"
+          
+          if [ "$http_code" -ne 200 ]; then
+            echo "❌ Failed to get stack information. HTTP Code: $http_code"
+            echo "Response: $body"
+            exit 1
+          fi
+          
+          echo "✅ Stack information retrieved successfully"
+          echo "Stack details: $body"
         env:
           PORTAINER_URL: ${{ secrets.PORTAINER_URL }}
           PORTAINER_STACK_ID: ${{ secrets.PORTAINER_STACK_ID }}
-
-      - name: Trigger Stack Update in Portainer
+          
+      - name: Trigger Git Pull in Portainer
         run: |
-          curl -s -X POST "$PORTAINER_URL/api/stacks/$PORTAINER_STACK_ID/update" \
+          echo "🔄 Triggering Git pull in Portainer stack..."
+          response=$(curl -s -w "%{http_code}" -X POST "$PORTAINER_URL/api/stacks/$PORTAINER_STACK_ID/git/pull?endpointId=$PORTAINER_ENVIRONMENT_ID" \
             -H "Authorization: Bearer ${{ steps.get_token.outputs.token }}" \
-            -H "Content-Type: application/json"
+            -H "Content-Type: application/json")
+          
+          http_code="${response: -3}"
+          body="${response%???}"
+          
+          if [ "$http_code" -ne 200 ]; then
+            echo "❌ Failed to trigger git pull. HTTP Code: $http_code"
+            echo "Response: $body"
+            exit 1
+          fi
+          
+          echo "✅ Git pull triggered successfully"
+          echo "Response: $body"
+        env:
+          PORTAINER_URL: ${{ secrets.PORTAINER_URL }}
+          PORTAINER_STACK_ID: ${{ secrets.PORTAINER_STACK_ID }}
+          PORTAINER_ENVIRONMENT_ID: ${{ env.PORTAINER_ENVIRONMENT_ID }}
+          
+      - name: Update Stack in Portainer
+        run: |
+          echo "🚀 Updating stack in Portainer..."
+          
+          # Método 1: Usar el endpoint de redeploy (más confiable)
+          response=$(curl -s -w "%{http_code}" -X POST "$PORTAINER_URL/api/stacks/$PORTAINER_STACK_ID/redeploy?endpointId=$PORTAINER_ENVIRONMENT_ID" \
+            -H "Authorization: Bearer ${{ steps.get_token.outputs.token }}" \
+            -H "Content-Type: application/json" \
+            -d '{"pullImage": true}')
+          
+          http_code="${response: -3}"
+          body="${response%???}"
+          
+          if [ "$http_code" -eq 200 ]; then
+            echo "✅ Stack redeployed successfully using redeploy endpoint"
+            echo "Response: $body"
+          else
+            echo "⚠️  Redeploy failed, trying update endpoint..."
+            
+            # Método 2: Usar el endpoint de update como fallback
+            response=$(curl -s -w "%{http_code}" -X PUT "$PORTAINER_URL/api/stacks/$PORTAINER_STACK_ID?endpointId=$PORTAINER_ENVIRONMENT_ID" \
+              -H "Authorization: Bearer ${{ steps.get_token.outputs.token }}" \
+              -H "Content-Type: application/json" \
+              -d '{
+                "pullImage": true,
+                "prune": false
+              }')
+            
+            http_code="${response: -3}"
+            body="${response%???}"
+            
+            if [ "$http_code" -ne 200 ]; then
+              echo "❌ Failed to update stack. HTTP Code: $http_code"
+              echo "Response: $body"
+              exit 1
+            fi
+            
+            echo "✅ Stack updated successfully using update endpoint"
+            echo "Response: $body"
+          fi
+        env:
+          PORTAINER_URL: ${{ secrets.PORTAINER_URL }}
+          PORTAINER_STACK_ID: ${{ secrets.PORTAINER_STACK_ID }}
+          PORTAINER_ENVIRONMENT_ID: ${{ env.PORTAINER_ENVIRONMENT_ID }}
+          
+      - name: Verify Deployment
+        run: |
+          echo "🔍 Waiting for deployment to complete..."
+          sleep 30
+          
+          echo "📊 Checking stack status..."
+          response=$(curl -s -w "%{http_code}" -X GET "$PORTAINER_URL/api/stacks/$PORTAINER_STACK_ID" \
+            -H "Authorization: Bearer ${{ steps.get_token.outputs.token }}")
+          
+          http_code="${response: -3}"
+          body="${response%???}"
+          
+          if [ "$http_code" -eq 200 ]; then
+            echo "✅ Stack status retrieved successfully"
+            echo "Final stack status: $body"
+          else
+            echo "⚠️  Could not retrieve final stack status"
+            echo "Response: $body"
+          fi
         env:
           PORTAINER_URL: ${{ secrets.PORTAINER_URL }}
           PORTAINER_STACK_ID: ${{ secrets.PORTAINER_STACK_ID }}

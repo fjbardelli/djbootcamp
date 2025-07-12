@@ -52,9 +52,13 @@ jobs:
         run: docker push $IMAGE_NAME:latest
         
       - name: ReDeploy to Portainer
-        uses:  arminmiau/portainer-git-stack-redeploy-action@v1.0
+        uses: spawnlab-dev/stack-deploy-action@v1
         with:
-          portainerUrl: ${{ secrets.PORTAINER_URL }}
-          accessToken: ${{ secrets.PORTAINER_TOKEN }}
-          stackName: ${{ secrets.PORTAINET_STACK_NAME }}
-          useAuthentication: true
+          host: ${{ secrets.PORTAINER_URL}}
+          api-token: ${{ secrets.PORTAINER_TOKEN }}
+          #swarmId: 'mtoqjoa2xxvXXXrw'
+          #endPointId: 1
+          stack: ${{ secrets.PORTAINET_STACK_NAME }}
+          client: 'portainer'
+          action: 'deploy'
+          #compose: 'docker-compose.yml'

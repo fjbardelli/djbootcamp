@@ -61,4 +61,4 @@ jobs:
           stack: ${{ secrets.PORTAINET_STACK_NAME }}
           client: 'portainer'
           action: 'deploy'
-          #compose: 'docker-compose.yml'
+          compose: 'swarm.yml'

@@ -28,7 +28,7 @@ jobs:
           pip install -r requirements.txt
 
       - name: Run Django Tests
-        run: python app/manage.py test
+        run: python manage.py test --keepdb
         env:
           DJANGO_SETTINGS_MODULE: bootcamp.settings
           SECRET_KEY: dummy-secret

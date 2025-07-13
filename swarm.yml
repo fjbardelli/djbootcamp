@@ -12,12 +12,12 @@ services:
         constraints: [node.role == manager]
       resources:
         limits:
-          memory: 256M
+          memory: 512M
       update_config:
         parallelism: 1
         delay: 10s
         failure_action: rollback
-        order: start-first
+        #order: start-first
     networks:
       - appnet
     healthcheck:

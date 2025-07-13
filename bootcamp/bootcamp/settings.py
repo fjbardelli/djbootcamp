@@ -12,8 +12,10 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 from pathlib import Path
 import environ
+import sys
+
 env = environ.Env()
-# B
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -232,3 +234,9 @@ SPECTACULAR_SETTINGS = {
 'SERVE_PERMISSIONS': ['rest_framework.permissions.AllowAny'],
 'SERVE_AUTHENTICATION': ['rest_framework.authentication.BasicAuthentication'],
 }
+
+if 'test' in sys.argv:
+    DEBUG = False
+    INTERNAL_IPS = []
+    MIDDLEWARE = [mw for mw in MIDDLEWARE if 'debug_toolbar.middleware.DebugToolbarMiddleware' not in mw]
+    INSTALLED_APPS = [app for app in INSTALLED_APPS if 'debug_toolbar' not in app]

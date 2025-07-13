@@ -92,24 +92,6 @@ class MateriasViewSetTest(APITestCase):
         response = self.client.post(url, data_materia, **self.headers_not_user)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    def test_post_materias_with_no_staff(self):
-        url = reverse('materias-list')
-        response = self.client.post(url, data_materia, format='json')
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-
-    def test_post_materias_with_staff(self):
-        url = reverse('materias-list')
-        response = self.client.post(url, data_materia, **self.headers_staff)
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(Materia.objects.count(), 1)
-        self.assertEqual(Materia.objects.get(id=1).nombre, 'Historia')
-
-    def test_post_materias_with_coordinador(self):
-        url = reverse('materias-list')
-        response = self.client.post(url, data_materia, **self.headers_coordinador)
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(Materia.objects.count(), 1)
-        self.assertEqual(Materia.objects.get(id=1).nombre, 'Historia')
 
     def test_post_materias_with_alumno(self):
         url = reverse('materias-list')

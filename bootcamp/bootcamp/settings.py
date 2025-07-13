@@ -60,7 +60,7 @@ PROJECT_APPS = [
 ]
 if DEBUG:
     DJANGO_APPS.append('debug_toolbar')
-    
+
 INSTALLED_APPS = DJANGO_APPS + EXTERNAL_APPS + PROJECT_APPS
 
 MIDDLEWARE = [
@@ -83,6 +83,7 @@ INTERNAL_IPS = [
 
 DEBUG_TOOLBAR_CONFIG = {
     'SHOW_COLLAPSED': True,
+    'IS_RUNNING_TESTS': False,
     'SHOW_TOOLBAR_CALLBACK': lambda request: DEBUG,
 }
 

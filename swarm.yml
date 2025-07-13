@@ -13,10 +13,18 @@ services:
       resources:
         limits:
           memory: 256M
+      update_config:
+        parallelism: 1
+        delay: 10s
+        failure_action: rollback
     networks:
       - appnet
-    #volumes:
-    #  - /AityNet/volumes/club/media:/code/media
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health/"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 30s
     environment:
       # Configuracion del Proxy & Certificados SSL 
       - VIRTUAL_HOST=dj-codigo-facilito.fliabardelli.com.ar

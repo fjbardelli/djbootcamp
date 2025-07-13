@@ -11,23 +11,26 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+import environ
+env = environ.Env()
+# B
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-#SECRET_KEY = 'django-insecure-qftfreu$+@e*i--!&6(axowi7nco26)2w%%h9=&=x743oey4-='
-SECRET_KEY = '+!@g7@r_h^nn6^2#6yy89u9cbljbc@39^rcml37$uzyo8r98jn'
-
+SECRET_KEY = env.str("DJANGO_SECRET_KEY", "+!@g7@r_h^nn6^2#6yy89u9cbljbc@39^rcml37$uzyo8r98jn")
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-ALLOWED_HOSTS = ['*']
+DEBUG =  env.bool("DJANGO_DEBUG", True)
+ALLOWED_HOSTS = ['*',
+                'https://dj-codigo-facilito.fliabardelli.com.ar'
+                '127.0.0.1',
+                'localhost',
+]
 APPEND_SLASH = True
-
 
 # Application definition
 
@@ -44,6 +47,8 @@ EXTERNAL_APPS = [
     'corsheaders',
     'rest_framework.authtoken',
     'rest_framework_simplejwt.token_blacklist',
+    'drf_spectacular',
+    'drf_spectacular_sidecar',
 ]
 #Aplicaciones del proyecto
 PROJECT_APPS = [
@@ -53,10 +58,13 @@ PROJECT_APPS = [
     'personas.apps.PersonasConfig',
     'examenes.apps.ExamenesConfig',
 ]
-
+if DEBUG:
+    DJANGO_APPS.append('debug_toolbar')
+    
 INSTALLED_APPS = DJANGO_APPS + EXTERNAL_APPS + PROJECT_APPS
 
 MIDDLEWARE = [
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -67,7 +75,16 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 MIDDLEWARE = ['corsheaders.middleware.CorsMiddleware'] + MIDDLEWARE
+if DEBUG:
+    MIDDLEWARE.insert(0, 'debug_toolbar.middleware.DebugToolbarMiddleware')
+INTERNAL_IPS = [
+    '127.0.0.1',
+]
 
+DEBUG_TOOLBAR_CONFIG = {
+    'SHOW_COLLAPSED': True,
+    'SHOW_TOOLBAR_CALLBACK': lambda request: DEBUG,
+}
 
 CACHES = {
     'default': {
@@ -123,7 +140,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
 
@@ -136,7 +152,11 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = 'static/'
-
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+# Rutas adicionales donde buscar archivos estáticos (para desarrollo)
+STATICFILES_DIRS = [
+    BASE_DIR / 'static',
+]
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
@@ -165,18 +185,27 @@ REST_FRAMEWORK = {
     },
     'UNAUTHENTICATED_USER': None,
     'DATETIME_FORMAT': "%d-%m-%Y %H:%M:%S",
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
 
 # Seguridad general en Producción
+CORS_ALLOWED_ORIGINS = [
+    'https://dj-codigo-facilito.fliabardelli.com.ar',
+]
+CSRF_TRUSTED_ORIGINS = [
+    "https://*",
+    "https://dj-codigo-facilito.fliabardelli.com.ar"
+]
+print(f"DEBUG: {DEBUG}")
 if not DEBUG:
+    print("Configuración de seguridad para producción activada")
     # Protecciones contra CSRF y clicjacking
     CSRF_COOKIE_SECURE = True
     SESSION_COOKIE_SECURE = True
     X_FRAME_OPTIONS = 'DENY'
     # CORS (si es necesario desde frontend separado)
-    CORS_ALLOWED_ORIGINS = [
-        'https://dj-codigo-facilito.fliabardelli.com.ar',
-    ]
+
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
     # Protección de cabeceras
     SECURE_BROWSER_XSS_FILTER = True
     SECURE_CONTENT_TYPE_NOSNIFF = True
@@ -186,3 +215,18 @@ if not DEBUG:
     SECURE_HSTS_PRELOAD = True
     # HTTPS obligatorio
     SECURE_SSL_REDIRECT = True
+
+SPECTACULAR_SETTINGS = {
+'TITLE': 'Bootcamp API',
+'DESCRIPTION': 'Django Avanzado Codigo Facilito',
+'VERSION': '1.0.0',
+'SERVE_INCLUDE_SCHEMA': False,
+# OTHER SETTINGS
+'SWAGGER_UI_DIST': 'SIDECAR',  # shorthand to use the sidecar instead
+'SWAGGER_UI_FAVICON_HREF': 'SIDECAR',
+'REDOC_DIST': 'SIDECAR',
+
+'SERVE_PUBLIC': True,
+'SERVE_PERMISSIONS': ['rest_framework.permissions.AllowAny'],
+'SERVE_AUTHENTICATION': ['rest_framework.authentication.BasicAuthentication'],
+}

@@ -5,7 +5,7 @@ from django.views.generic import TemplateView
 
 
 class ExamenViewSet(viewsets.ModelViewSet):
-    queryset = Examen.objects.all()
+    queryset = Examen.objects.select_related("comision", "comision__materia", "comision__docente").all().order_by("fecha")
     serializer_class = ExamenSerializer
 
 
@@ -14,5 +14,5 @@ class IndexView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["examenes"] = Examen.objects.all()
+        context["examenes"] = Examen.objects.select_related("comision", "comision__materia", "comision__docente").all()
         return context

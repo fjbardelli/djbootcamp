@@ -33,7 +33,7 @@ jobs:
 
       - name: Run Django Tests
         working-directory: bootcamp
-        run: python manage.py test --keepdb
+        run: python manage.py test --keepdb --verbosity=0 > test_output.log && tail -n 20 test_output.log
         #
         #  DJANGO_SETTINGS_MODULE: bootcamp.settings
         #  SECRET_KEY: dummy-secret-for-testing

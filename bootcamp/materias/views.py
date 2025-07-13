@@ -7,6 +7,6 @@ from materias.permissions import IsCoordinadorOrAdmin
 # Create your views here.
 
 class MateriaViewSet(viewsets.ModelViewSet):
-    queryset = Materia.objects.all()
+    queryset = Materia.objects.select_related("especialidad").all()
     serializer_class = MateriaSerializer
     permission_classes = [IsCoordinadorOrAdmin]

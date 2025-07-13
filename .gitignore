@@ -4,3 +4,10 @@ __pycache__/
 .pytest_cache/
 .ruff_cache/
 .pdm-python
+bootcamp/staticfiles/*
+!bootcamp/staticfiles/.gitkeep
+bootcamp/static/*
+!bootcamp/static/.gitkeep
+*.env
+
+

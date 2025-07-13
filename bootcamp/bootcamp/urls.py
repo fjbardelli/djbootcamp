@@ -17,10 +17,23 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from examenes.views import IndexView
+from django.http import JsonResponse
+from django.conf import settings
+from django.conf.urls.static import static
+from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
+
+def healthcheck(request):
+    return JsonResponse({"status": "ok"})
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', IndexView.as_view(), name='index'),
+    path("health/", healthcheck),
 
+    path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
+    path('api/schema/swagger-ui/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
+    path('api/schema/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
+    
     # API endpoints for each app
     path('api/', include('personas.urls')),
     path('api/', include('materias.urls')),
@@ -28,3 +41,10 @@ urlpatterns = [
     path('api/', include('comisiones.urls')),
     path('api/', include('especialidad.urls'))
 ]
+
+urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+if settings.DEBUG:  # Solo se incluye en desarrollo
+    import debug_toolbar
+    urlpatterns = [
+        path('__debug__/', include(debug_toolbar.urls)),
+    ] + urlpatterns

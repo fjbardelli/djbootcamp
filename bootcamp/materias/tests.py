@@ -70,51 +70,51 @@ class MateriasViewSetTest(APITestCase):
         }
 
     # GET
-    # def test_get_materias_authenticated_user(self):
-    #     url = reverse('materias-list')
-    #     response = self.client.get(url, **self.headers_staff)
-    #     self.assertEqual(response.status_code, status.HTTP_200_OK)
+    def test_get_materias_authenticated_user(self):
+        url = reverse('materias-list')
+        response = self.client.get(url, **self.headers_staff)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-    # def test_get_materias_user_not_staff (self):
-    #     url = reverse('materias-list')
-    #     response = self.client.get(url, **self.headers)
-    #     self.assertEqual(response.status_code, status.HTTP_200_OK)
+    def test_get_materias_user_not_staff (self):
+        url = reverse('materias-list')
+        response = self.client.get(url, **self.headers)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-    # def test_get_materias_not_ser(self):
-    #     url = reverse('materias-list')
-    #     response = self.client.get(url, **self.headers_not_user)
-    #     self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+    def test_get_materias_not_ser(self):
+        url = reverse('materias-list')
+        response = self.client.get(url, **self.headers_not_user)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     # POST
 
-    # def test_post_materias_without_authentication(self):
-    #     url = reverse('materias-list')
-    #     response = self.client.post(url, data_materia, **self.headers_not_user)
-    #     self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+    def test_post_materias_without_authentication(self):
+        url = reverse('materias-list')
+        response = self.client.post(url, data_materia, **self.headers_not_user)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    # def test_post_materias_with_no_staff(self):
-    #     url = reverse('materias-list')
-    #     response = self.client.post(url, data_materia, format='json')
-    #     self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+    def test_post_materias_with_no_staff(self):
+        url = reverse('materias-list')
+        response = self.client.post(url, data_materia, format='json')
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    # def test_post_materias_with_staff(self):
-    #     url = reverse('materias-list')
-    #     response = self.client.post(url, data_materia, **self.headers_staff)
-    #     self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-    #     self.assertEqual(Materia.objects.count(), 1)
-    #     self.assertEqual(Materia.objects.get(id=1).nombre, 'Historia')
+    def test_post_materias_with_staff(self):
+        url = reverse('materias-list')
+        response = self.client.post(url, data_materia, **self.headers_staff)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(Materia.objects.count(), 1)
+        self.assertEqual(Materia.objects.get(id=1).nombre, 'Historia')
 
-    # def test_post_materias_with_coordinador(self):
-    #     url = reverse('materias-list')
-    #     response = self.client.post(url, data_materia, **self.headers_coordinador)
-    #     self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-    #     self.assertEqual(Materia.objects.count(), 1)
-    #     self.assertEqual(Materia.objects.get(id=1).nombre, 'Historia')
+    def test_post_materias_with_coordinador(self):
+        url = reverse('materias-list')
+        response = self.client.post(url, data_materia, **self.headers_coordinador)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(Materia.objects.count(), 1)
+        self.assertEqual(Materia.objects.get(id=1).nombre, 'Historia')
 
-    # def test_post_materias_with_alumno(self):
-    #     url = reverse('materias-list')
-    #     response = self.client.post(url, data_materia, **self.headers_alumno)
-    #     self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+    def test_post_materias_with_alumno(self):
+        url = reverse('materias-list')
+        response = self.client.post(url, data_materia, **self.headers_alumno)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     # PUT
 
@@ -135,28 +135,6 @@ class MateriasViewSetTest(APITestCase):
         url = reverse('materias-detail', kwargs={'pk': id})
         response = self.client.put(url, data_materia, **self.headers_alumno)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-
-    # def test_put_materias_with_staff(self):
-    #     data_materia.pop("especialidad")
-    #     data_materia["especialidad"] = self.especialidad
-    #     materia = Materia.objects.create(**data_materia)
-    #     id = materia.id
-    #     data_materia["descripcion"] = "test"
-    #     url = reverse('materias-detail', kwargs={'pk': id})
-    #     response = self.client.put(url, data_materia, **self.headers_staff)
-    #     print("Error:", response.status_code, response.data)
-    #     self.assertEqual(response.status_code, status.HTTP_200_OK)
-    #     self.assertEqual(Materia.objects.get(id=id).descripcion, 'test')
-
-    # def test_put_materias_with_coordinador(self):
-    #     data_materia["especialidad"] = self.especialidad
-    #     materia = Materia.objects.create(**data_materia)
-    #     id = materia.id
-    #     data_materia["descripcion"] = "test"
-    #     url = reverse('materias-detail', kwargs={'pk': id})
-    #     response = self.client.put(url, data_materia, **self.headers_coordinador)
-    #     self.assertEqual(response.status_code, status.HTTP_200_OK)
-    #     self.assertEqual(Materia.objects.get(id=id).descripcion, 'test')
 
     def test_put_materias_with_alumno(self):
         data_materia["especialidad"] = self.especialidad

@@ -20,7 +20,6 @@ class ComisionAlumnosSerializer(serializers.ModelSerializer):
         data = super().to_representation(instance)
         data['id_alumno'] = instance.alumno.pk
         data['alumno'] = instance.alumno.nombre_completo
-        #data['comision'] = instance.comision.nombre
         data['regular'] = instance.regular
         data['email'] = instance.alumno.email
         return data

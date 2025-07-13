@@ -19,14 +19,14 @@ class Comision(models.Model):
     docente = models.ForeignKey(
         'personas.Docente',
         on_delete=models.CASCADE,
-        related_name='comisiones',
+        related_name='com_docente',
         blank=False,
         null=False
     )
     materia = models.ForeignKey(
         'materias.Materia',
         on_delete=models.DO_NOTHING,
-        related_name='comisiones',
+        related_name='com_materia',
         blank=False,
         null=False
     )

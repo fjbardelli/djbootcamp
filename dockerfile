@@ -1,17 +1,15 @@
-# Utilizar la imagen oficial de Python 3.9
-FROM python:3.12.11-alpine3.21
+FROM python:3.12-slim
 
-# Establecer el directorio de trabajo
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1
+
 WORKDIR /app
 
-# Copiar los archivos de la app
-COPY ./bootcamp /app
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Instalar las dependencias
-RUN pip install -r requirements.txt
+COPY ./bootcamp .
 
-# Exponer el puerto 8000
-EXPOSE 8000
+RUN python manage.py collectstatic --noinput
 
-# Definir el comando para ejecutar la app
-CMD ["gunicorn", "bootcamp.wsgi:application", "--workers", "3", "--bind", "0.0.0.0:8000"]
+CMD ["gunicorn", "bootcamp.wsgi:application", "--workers=3", "--bind=0.0.0.0:8000"]

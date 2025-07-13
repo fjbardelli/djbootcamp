@@ -8,7 +8,7 @@ class Examen(models.Model):
     hora_inicio = models.TimeField()
     hora_fin = models.TimeField()
     activo = models.BooleanField(default=True)
-    comision = models.OneToOneField("comisiones.Comision", on_delete=models.CASCADE, related_name='examen')
+    comision = models.OneToOneField("comisiones.Comision", on_delete=models.CASCADE, related_name='exa_comision', blank=False, null=False)
 
     def __str__(self):
         return f"{self.comision} - {self.fecha} {self.hora_inicio}"

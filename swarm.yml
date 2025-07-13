@@ -17,6 +17,7 @@ services:
         parallelism: 1
         delay: 10s
         failure_action: rollback
+        order: start-first
     networks:
       - appnet
     healthcheck:

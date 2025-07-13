@@ -60,8 +60,8 @@ PROJECT_APPS = [
     'personas.apps.PersonasConfig',
     'examenes.apps.ExamenesConfig',
 ]
-if DEBUG:
-    DJANGO_APPS.append('debug_toolbar')
+# if DEBUG:
+#     DJANGO_APPS.append('debug_toolbar')
 
 INSTALLED_APPS = DJANGO_APPS + EXTERNAL_APPS + PROJECT_APPS
 
@@ -77,17 +77,17 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 MIDDLEWARE = ['corsheaders.middleware.CorsMiddleware'] + MIDDLEWARE
-if DEBUG:
-    MIDDLEWARE.insert(0, 'debug_toolbar.middleware.DebugToolbarMiddleware')
+# if DEBUG:
+#     MIDDLEWARE.insert(0, 'debug_toolbar.middleware.DebugToolbarMiddleware')
 INTERNAL_IPS = [
     '127.0.0.1',
 ]
 
-DEBUG_TOOLBAR_CONFIG = {
-    'SHOW_COLLAPSED': True,
-    'IS_RUNNING_TESTS': False,
-    'SHOW_TOOLBAR_CALLBACK': lambda request: DEBUG,
-}
+# DEBUG_TOOLBAR_CONFIG = {
+#     'SHOW_COLLAPSED': True,
+#     'IS_RUNNING_TESTS': False,
+#     'SHOW_TOOLBAR_CALLBACK': lambda request: DEBUG,
+# }
 
 CACHES = {
     'default': {
@@ -235,8 +235,8 @@ SPECTACULAR_SETTINGS = {
 'SERVE_AUTHENTICATION': ['rest_framework.authentication.BasicAuthentication'],
 }
 
-if 'test' in sys.argv:
-    DEBUG = False
-    INTERNAL_IPS = []
-    MIDDLEWARE = [mw for mw in MIDDLEWARE if 'debug_toolbar.middleware.DebugToolbarMiddleware' not in mw]
-    INSTALLED_APPS = [app for app in INSTALLED_APPS if 'debug_toolbar' not in app]
+# if 'test' in sys.argv:
+#     DEBUG = False
+#     INTERNAL_IPS = []
+#     MIDDLEWARE = [mw for mw in MIDDLEWARE if 'debug_toolbar.middleware.DebugToolbarMiddleware' not in mw]
+#     INSTALLED_APPS = [app for app in INSTALLED_APPS if 'debug_toolbar' not in app]

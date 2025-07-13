@@ -186,6 +186,7 @@ REST_FRAMEWORK = {
     'UNAUTHENTICATED_USER': None,
     'DATETIME_FORMAT': "%d-%m-%Y %H:%M:%S",
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
 
 # Seguridad general en Producción

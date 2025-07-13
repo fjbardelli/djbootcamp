@@ -21,7 +21,7 @@ services:
     networks:
       - appnet
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/health/"]
+      test: ["CMD", "curl", "-f", "https://dj-codigo-facilito.fliabardelli.com.ar/health/"]
       interval: 10s
       timeout: 3s
       retries: 5

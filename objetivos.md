@@ -54,7 +54,7 @@ solicitara:
     - [x] Bardelli, Fernando Jorge.
 - [x] Link del repositorio.
     - [GitHub](https://github.com/fjbardelli/djbootcamp)
-- [ ] Archivo PDF de la descripción del proyecto.
+- [x] Archivo PDF de la descripción del proyecto.
 - [x] Links del proyecto en producción.
     - [x] [producción](https://dj-codigo-facilito.fliabardelli.com.ar/)
 
@@ -64,10 +64,10 @@ solicitara:
 - [x] Repositorio public en Github (main/master).
 - [x] URL del proyecto en producción.
     - [x] [producción](https://dj-codigo-facilito.fliabardelli.com.ar/)
-- [ ] Documentación.
-- [ ] PDF (Cualquier formato)
-- [ ] Incluir objetivo de proyecto y retos presentados.
-- [ ] README.md definiendo doc y requerimientos del proyecto
+- [x] Documentación.
+- [x] PDF (Cualquier formato)
+- [x] Incluir objetivo de proyecto y retos presentados.
+- [x] README.md definiendo doc y requerimientos del proyecto
 
 [Link de entrega](https://codigofacilito.com/bootcamps/django-avanzado/projects/new)
 
